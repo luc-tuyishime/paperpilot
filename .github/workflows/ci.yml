@@ -1,0 +1,19 @@
+# Runs on every push and pull request. Free for public repos.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync                         # install app + dev dependencies
+      - run: uv run ruff check .             # lint: style and common bugs
+      - run: uv run ruff format --check .    # formatting
+      - run: uv run mypy app                 # type checks
+      - run: uv run pytest -v                # tests

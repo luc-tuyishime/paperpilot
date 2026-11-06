@@ -1,0 +1,14 @@
+# One command starts the whole system: `docker compose up --build`
+# Today it's only the API. Lesson 2 adds postgres, lesson 3 adds qdrant.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      PAPERPILOT_ENVIRONMENT: docker
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
