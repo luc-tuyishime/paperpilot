@@ -1,9 +1,13 @@
 """Entry point. `uvicorn app.main:app` imports this file and serves `app`."""
 
+import logging
+
 from fastapi import FastAPI
 
-from app.api.routes import health
+from app.api.routes import documents, health, search
 from app.core.config import get_settings
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
 
 def create_app() -> FastAPI:
@@ -11,7 +15,8 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(title=settings.app_name, version=settings.version)
     app.include_router(health.router)
-    # Next lessons: app.include_router(documents.router), app.include_router(ask.router), ...
+    app.include_router(documents.router)
+    app.include_router(search.router)
     return app
 
 
