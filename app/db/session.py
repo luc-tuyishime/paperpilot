@@ -12,7 +12,7 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.core.config import get_settings
-
+ 
 
 class Base(DeclarativeBase):
     """All ORM models inherit from this. Alembic reads Base.metadata to build migrations."""
