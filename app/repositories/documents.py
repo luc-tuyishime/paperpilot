@@ -10,7 +10,7 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import Document, DocumentStatus
+from app.db.models import Document, DocumentSource, DocumentStatus
 
 
 class DocumentRepository:
@@ -22,6 +22,15 @@ class DocumentRepository:
 
     def get_by_hash(self, content_hash: str) -> Document | None:
         return self.session.scalar(select(Document).where(Document.content_hash == content_hash))
+
+    def get_by_source(self, source: DocumentSource, source_ref: str) -> Document | None:
+        return self.session.scalar(
+            select(Document).where(Document.source == source, Document.source_ref == source_ref)
+        )
+
+    def rename(self, document: Document, title: str) -> None:
+        document.title = title
+        self.session.commit()
 
     def list(self) -> Sequence[Document]:
         return self.session.scalars(select(Document).order_by(Document.created_at.desc())).all()

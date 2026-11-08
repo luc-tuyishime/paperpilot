@@ -1,0 +1,292 @@
+{
+  "summary": {
+    "retrieval_hit": 1.0,
+    "citation_hit": 1.0,
+    "answer_correct": 1.0,
+    "refusal_correct": 1.0
+  },
+  "results": [
+    {
+      "id": "transformer-bleu-en-de",
+      "question": "What BLEU score does the big Transformer achieve on WMT 2014 English-to-German?",
+      "answerable": true,
+      "answer": "The big Transformer model achieves a BLEU score of 28.4 on the WMT 2014 English-to-German translation task [1][3].",
+      "refused": false,
+      "best_score": 0.783988,
+      "latency_ms": 620,
+      "input_tokens": 2117,
+      "output_tokens": 36,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1706.03762"
+      ]
+    },
+    {
+      "id": "transformer-training-time",
+      "question": "How long did training the big Transformer take, and on what GPUs?",
+      "answerable": true,
+      "answer": "Training the big Transformer model took 3.5 days on 8 P100 GPUs for the English-to-German translation task [1].",
+      "refused": false,
+      "best_score": 0.7311595,
+      "latency_ms": 715,
+      "input_tokens": 1881,
+      "output_tokens": 31,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1706.03762"
+      ]
+    },
+    {
+      "id": "transformer-label-smoothing",
+      "question": "What label smoothing value was used to train the Transformer?",
+      "answerable": true,
+      "answer": "During training, a label smoothing value of $\\epsilon_{ls} = 0.1$ was employed [1].",
+      "refused": false,
+      "best_score": 0.7557909,
+      "latency_ms": 825,
+      "input_tokens": 1951,
+      "output_tokens": 24,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1706.03762"
+      ]
+    },
+    {
+      "id": "transformer-heads",
+      "question": "How many parallel attention heads does the Transformer base model use?",
+      "answerable": true,
+      "answer": "The Transformer model employs $h = 8$ parallel attention layers, or heads [1].",
+      "refused": false,
+      "best_score": 0.80674124,
+      "latency_ms": 1262,
+      "input_tokens": 1556,
+      "output_tokens": 19,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1706.03762"
+      ]
+    },
+    {
+      "id": "bahdanau-model-name",
+      "question": "What is the name of the model that learns to align and translate jointly?",
+      "answerable": true,
+      "answer": "The proposed model that jointly learns to align and translate is called RNNsearch [1].",
+      "refused": false,
+      "best_score": 0.7790098,
+      "latency_ms": 678,
+      "input_tokens": 1612,
+      "output_tokens": 17,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1409.0473"
+      ]
+    },
+    {
+      "id": "bahdanau-encoder",
+      "question": "What type of RNN encoder does RNNsearch use to annotate the source sentence?",
+      "answerable": true,
+      "answer": "RNNsearch uses a bidirectional RNN (BiRNN) as an encoder to annotate sequences [3][6].",
+      "refused": false,
+      "best_score": 0.7591966,
+      "latency_ms": 677,
+      "input_tokens": 1877,
+      "output_tokens": 21,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1409.0473"
+      ]
+    },
+    {
+      "id": "gan-two-models",
+      "question": "Which two models are trained simultaneously in a generative adversarial network?",
+      "answerable": true,
+      "answer": "In a generative adversarial network, two models are trained simultaneously: a generative model $G$ that captures the data distribution, and a discriminative model $D$ that estimates the probability of a sample coming from the training data rather than from $G$ [1].",
+      "refused": false,
+      "best_score": 0.8355385,
+      "latency_ms": 743,
+      "input_tokens": 1491,
+      "output_tokens": 53,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1406.2661"
+      ]
+    },
+    {
+      "id": "gan-game",
+      "question": "What kind of game do the generator and discriminator play in the GAN framework?",
+      "answerable": true,
+      "answer": "In the generative adversarial nets framework, the two models play a minimax two-player game [3].",
+      "refused": false,
+      "best_score": 0.69748497,
+      "latency_ms": 736,
+      "input_tokens": 1491,
+      "output_tokens": 20,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1406.2661"
+      ]
+    },
+    {
+      "id": "gat-citation-datasets",
+      "question": "Which citation network datasets were used to evaluate Graph Attention Networks?",
+      "answerable": true,
+      "answer": "The citation network datasets used to evaluate Graph Attention Networks (GATs) are Cora, Citeseer, and Pubmed [6].",
+      "refused": false,
+      "best_score": 0.7968515,
+      "latency_ms": 1442,
+      "input_tokens": 1583,
+      "output_tokens": 27,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1710.10903"
+      ]
+    },
+    {
+      "id": "gat-inductive",
+      "question": "Which dataset is used for the inductive learning task in the Graph Attention Networks paper?",
+      "answerable": true,
+      "answer": "For the inductive learning task, the paper uses a protein-protein interaction (PPI) dataset consisting of graphs corresponding to different human tissues [4].",
+      "refused": false,
+      "best_score": 0.7950194,
+      "latency_ms": 1154,
+      "input_tokens": 1657,
+      "output_tokens": 29,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "1710.10903"
+      ]
+    },
+    {
+      "id": "rag-memories",
+      "question": "What two kinds of memory does retrieval-augmented generation combine?",
+      "answerable": true,
+      "answer": "Retrieval-augmented generation (RAG) combines pre-trained parametric memory and non-parametric memory [1]. The parametric memory is a pre-trained sequence-to-sequence model (specifically, a BART transformer), while the non-parametric memory is a dense vector index of Wikipedia accessed via a pre-trained neural retriever [1][3].",
+      "refused": false,
+      "best_score": 0.75851905,
+      "latency_ms": 816,
+      "input_tokens": 1600,
+      "output_tokens": 70,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "2005.11401"
+      ]
+    },
+    {
+      "id": "rag-retriever",
+      "question": "Which retriever does the RAG model use to find documents?",
+      "answerable": true,
+      "answer": "The RAG model's retriever is initialized using DPR's retriever, which applies retrieval supervision on Natural Questions and TriviaQA [1].",
+      "refused": false,
+      "best_score": 0.75393754,
+      "latency_ms": 1307,
+      "input_tokens": 1853,
+      "output_tokens": 28,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "2005.11401"
+      ]
+    },
+    {
+      "id": "rag-formulations",
+      "question": "What are the two RAG model formulations compared in the paper?",
+      "answerable": true,
+      "answer": "Based on the provided papers, the two RAG model formulations compared are RAG-Sequence and RAG-Token [3][5].",
+      "refused": false,
+      "best_score": 0.7297424,
+      "latency_ms": 739,
+      "input_tokens": 1586,
+      "output_tokens": 28,
+      "retrieval_hit": true,
+      "citation_hit": true,
+      "answer_correct": true,
+      "refusal_correct": true,
+      "cited_papers": [
+        "2005.11401"
+      ]
+    },
+    {
+      "id": "unanswerable-capital",
+      "question": "What is the capital of Rwanda?",
+      "answerable": false,
+      "answer": "I don't know based on the provided papers.",
+      "refused": true,
+      "best_score": 0.5479516,
+      "latency_ms": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "retrieval_hit": null,
+      "citation_hit": null,
+      "answer_correct": null,
+      "refusal_correct": true,
+      "cited_papers": []
+    },
+    {
+      "id": "unanswerable-gpt4",
+      "question": "What BLEU score does GPT-4 achieve on WMT 2014 English-to-German?",
+      "answerable": false,
+      "answer": "I don't know based on the provided papers.",
+      "refused": true,
+      "best_score": 0.7185655,
+      "latency_ms": 747,
+      "input_tokens": 1987,
+      "output_tokens": 11,
+      "retrieval_hit": null,
+      "citation_hit": null,
+      "answer_correct": null,
+      "refusal_correct": true,
+      "cited_papers": []
+    },
+    {
+      "id": "unanswerable-world-cup",
+      "question": "Who won the 2022 FIFA World Cup?",
+      "answerable": false,
+      "answer": "I don't know based on the provided papers.",
+      "refused": true,
+      "best_score": 0.5511817,
+      "latency_ms": 701,
+      "input_tokens": 402,
+      "output_tokens": 11,
+      "retrieval_hit": null,
+      "citation_hit": null,
+      "answer_correct": null,
+      "refusal_correct": true,
+      "cited_papers": []
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+# PaperPilot evaluation set.
+#
+# Each answerable question names the paper that should answer it (arxiv) and the facts the
+# answer must contain (must_include). must_include is a list of groups: every group must match,
+# and a group matches if ANY of its alternatives appears (case-insensitive).
+#   must_include: [["28.4"]]                              -> "28.4" must appear
+#   must_include: [["generator", "generative"], ["discriminat"]]  -> both ideas must appear
+#
+# Unanswerable questions (answerable: false) check that PaperPilot says "I don't know"
+# instead of inventing an answer.
+#
+# Add your own questions from your reading notes. 30-50 is a good target over time.
+
+papers: [1409.0473, 1706.03762, 1710.10903, 1406.2661, 2005.11401]
+
+# The run fails (exit code 1, red CI) if any score drops below these.
+thresholds:
+  retrieval_hit: 0.8    # the right paper is among the retrieved sources
+  citation_hit: 0.7     # the answer cites the right paper
+  answer_correct: 0.7   # the expected facts are in the answer
+  refusal_correct: 0.8  # says "I don't know" exactly when it should
+
+questions:
+  # --- Attention Is All You Need (Transformer) ---
+  - id: transformer-bleu-en-de
+    question: What BLEU score does the big Transformer achieve on WMT 2014 English-to-German?
+    arxiv: 1706.03762
+    must_include: [["28.4"]]
+  - id: transformer-training-time
+    question: How long did training the big Transformer take, and on what GPUs?
+    arxiv: 1706.03762
+    must_include: [["3.5 days"], ["P100"]]
+  - id: transformer-label-smoothing
+    question: What label smoothing value was used to train the Transformer?
+    arxiv: 1706.03762
+    must_include: [["0.1"]]
+  - id: transformer-heads
+    question: How many parallel attention heads does the Transformer base model use?
+    arxiv: 1706.03762
+    must_include: [["8", "eight"]]
+
+  # --- Bahdanau et al., Neural Machine Translation by Jointly Learning to Align and Translate ---
+  - id: bahdanau-model-name
+    question: What is the name of the model that learns to align and translate jointly?
+    arxiv: 1409.0473
+    must_include: [["RNNsearch"]]
+  - id: bahdanau-encoder
+    question: What type of RNN encoder does RNNsearch use to annotate the source sentence?
+    arxiv: 1409.0473
+    must_include: [["bidirectional"]]
+
+  # --- Generative Adversarial Nets ---
+  - id: gan-two-models
+    question: Which two models are trained simultaneously in a generative adversarial network?
+    arxiv: 1406.2661
+    must_include: [["generator", "generative"], ["discriminator", "discriminative"]]
+  - id: gan-game
+    question: What kind of game do the generator and discriminator play in the GAN framework?
+    arxiv: 1406.2661
+    must_include: [["minimax", "min-max", "two-player"]]
+
+  # --- Graph Attention Networks ---
+  - id: gat-citation-datasets
+    question: Which citation network datasets were used to evaluate Graph Attention Networks?
+    arxiv: 1710.10903
+    must_include: [["Cora"], ["Citeseer"], ["Pubmed"]]
+  - id: gat-inductive
+    question: Which dataset is used for the inductive learning task in the Graph Attention Networks paper?
+    arxiv: 1710.10903
+    must_include: [["PPI", "protein-protein", "protein protein"]]
+
+  # --- Retrieval-Augmented Generation ---
+  - id: rag-memories
+    question: What two kinds of memory does retrieval-augmented generation combine?
+    arxiv: 2005.11401
+    must_include: [["parametric"], ["non-parametric", "nonparametric"]]
+  - id: rag-retriever
+    question: Which retriever does the RAG model use to find documents?
+    arxiv: 2005.11401
+    must_include: [["DPR", "Dense Passage Retriev"]]
+  - id: rag-formulations
+    question: What are the two RAG model formulations compared in the paper?
+    arxiv: 2005.11401
+    must_include: [["RAG-Sequence"], ["RAG-Token"]]
+
+  # --- Not in the papers: must refuse ---
+  - id: unanswerable-capital
+    question: What is the capital of Rwanda?
+    answerable: false
+  - id: unanswerable-gpt4
+    question: What BLEU score does GPT-4 achieve on WMT 2014 English-to-German?
+    answerable: false
+  - id: unanswerable-world-cup
+    question: Who won the 2022 FIFA World Cup?
+    answerable: false

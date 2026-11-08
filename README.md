@@ -20,6 +20,9 @@ uv run pytest -v                         # tests (no Docker or Ollama needed)
 curl -F "file=@paper.pdf" localhost:8000/documents          # upload → ingested in background
 curl localhost:8000/documents                               # status of each paper
 curl "localhost:8000/search?q=what+is+multi-head+attention" # semantic search with page numbers
+curl localhost:8000/ask -H "Content-Type: application/json" \
+  -d '{"question": "What BLEU score does the Transformer get?"}' # answer with citations
+uv run python -m evals.run_eval                             # evaluation report
 ```
 
 Open http://localhost:8000/docs for the interactive API docs (generated from the code).
@@ -29,7 +32,8 @@ Open http://localhost:8000/docs for the interactive API docs (generated from the
 | Need | Tool |
 |---|---|
 | API | FastAPI |
-| LLM + embeddings | Ollama (Llama 3.1 8B, nomic-embed-text), or the Gemini free tier |
+| Embeddings | Ollama (nomic-embed-text), local |
+| Answers | Gemini free tier, or Ollama (llama3.2:3b) offline |
 | Vector database | Qdrant (Docker) |
 | Database / memory | PostgreSQL (Docker) |
 | Agent | LangGraph |
@@ -42,7 +46,7 @@ Open http://localhost:8000/docs for the interactive API docs (generated from the
 
 - [x] **Lesson 1.** Project skeleton, `/health`, tests, CI, Docker
 - [x] **Day 1. Ingestion:** PostgreSQL + Alembic, PDF/arXiv upload, chunking, Ollama embeddings, Qdrant, background tasks, `/search`
-- [ ] **Day 2. RAG with citations + evaluation in CI** (answers with the Gemini free tier)
+- [x] **Day 2. RAG:** `/ask` and `/ask/stream` (SSE) with page citations and an "I don't know" rule; Gemini/Ollama behind one LLM interface; evaluation set with 4 metrics, run in CI
 - [ ] **Day 3. LangGraph agent with tools and memory** + architecture docs
 - [ ] Later: Next.js chat, Grafana dashboard, Kubernetes manifests
 
@@ -54,11 +58,13 @@ app/
   core/config.py       # settings from environment variables
   api/deps.py          # shared dependencies (DB, embedder, vector store), overridable in tests
   api/routes/          # HTTP layer: documents, search, health
-  services/            # pdf, chunking, embeddings, vector_store, ingestion, arxiv
+  services/            # pdf, chunking, embeddings, vector_store, ingestion, arxiv, rag
+  llm/                 # one LLM interface: Gemini, Ollama (retries, streaming, token usage)
   repositories/        # database queries
   db/                  # engine, session, ORM models
   schemas/             # API request/response models
 migrations/            # Alembic database migrations
-tests/                 # pytest, with fakes for Postgres, Qdrant and Ollama
+evals/                 # evaluation set, scoring and runner
+tests/                 # pytest, with fakes for Postgres, Qdrant, Ollama and the LLM
 docs/                  # day-by-day guides, later ADRs
 ```

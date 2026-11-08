@@ -1,5 +1,6 @@
 from collections.abc import Callable
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.services.vector_store import VectorStore
@@ -65,6 +66,51 @@ def test_search_finds_the_right_page(client: TestClient, make_pdf: Callable[...,
 
     assert hits[0]["page"] == 2
     assert "discriminator" in hits[0]["text"]
+
+
+def test_upload_with_explicit_title(client: TestClient, make_pdf: Callable[..., bytes]) -> None:
+    response = client.post(
+        "/documents",
+        files={"file": ("p.pdf", make_pdf([PAGE_1]), "application/pdf")},
+        data={"title": "Attention Is All You Need"},
+    )
+    assert response.json()["title"] == "Attention Is All You Need"
+
+
+def test_rename_updates_postgres_and_qdrant(
+    client: TestClient, store: VectorStore, make_pdf: Callable[..., bytes]
+) -> None:
+    doc = upload(client, make_pdf([PAGE_1]))
+
+    client.patch(f"/documents/{doc['id']}", json={"title": "Better Title"})
+
+    assert client.get(f"/documents/{doc['id']}").json()["title"] == "Better Title"
+    hits = client.get("/search", params={"q": "transformer attention"}).json()
+    assert {h["title"] for h in hits} == {"Better Title"}
+
+
+def test_arxiv_import_uses_metadata_title_and_dedups_by_paper_id(
+    client: TestClient, make_pdf: Callable[..., bytes], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.api.routes import documents
+
+    downloads: list[str] = []
+
+    def fake_download(arxiv_id: str) -> bytes:
+        downloads.append(arxiv_id)
+        return make_pdf([PAGE_1 + arxiv_id])  # different bytes for every version
+
+    monkeypatch.setattr(documents, "download_arxiv_pdf", fake_download)
+    monkeypatch.setattr(documents, "fetch_arxiv_title", lambda _id: "Attention Is All You Need")
+
+    first = client.post("/documents/arxiv", json={"arxiv_id": "1706.03762v1"})
+    second = client.post("/documents/arxiv", json={"arxiv_id": "1706.03762v7"})
+
+    assert first.status_code == 201
+    assert first.json()["title"] == "Attention Is All You Need"
+    assert first.json()["source_ref"] == "1706.03762"  # stored without the version
+    assert second.status_code == 200 and second.json()["id"] == first.json()["id"]
+    assert downloads == ["1706.03762v1"]  # the second call didn't even download
 
 
 def test_invalid_arxiv_id_is_rejected(client: TestClient) -> None:
