@@ -38,6 +38,7 @@ services:
       PAPERPILOT_DATABASE_URL: postgresql+psycopg://paperpilot:paperpilot@postgres:5432/paperpilot
       PAPERPILOT_QDRANT_URL: http://qdrant:6333
       PAPERPILOT_OLLAMA_URL: http://host.docker.internal:11434
+      PAPERPILOT_GEMINI_API_KEY: ${PAPERPILOT_GEMINI_API_KEY:-}  # read from your .env
     volumes:
       - uploads:/app/data/uploads
     depends_on:

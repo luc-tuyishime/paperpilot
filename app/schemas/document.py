@@ -28,6 +28,10 @@ class ArxivImport(BaseModel):
     arxiv_id: str = Field(pattern=r"^\d{4}\.\d{4,5}(v\d+)?$", examples=["1706.03762"])
 
 
+class DocumentUpdate(BaseModel):
+    title: str = Field(min_length=3, max_length=500)
+
+
 class SearchHit(BaseModel):
     document_id: uuid.UUID
     title: str

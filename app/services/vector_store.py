@@ -84,6 +84,14 @@ class VectorStore:
         ]
         self.client.upsert(self.collection, points=points)
 
+    def set_title(self, document_id: uuid.UUID, title: str) -> None:
+        """Update the title stored on every chunk of a document (no re-embedding needed)."""
+        if not self.client.collection_exists(self.collection):
+            return
+        self.client.set_payload(
+            self.collection, payload={"title": title}, points=_by_document(document_id)
+        )
+
     def count(self, document_id: uuid.UUID | None = None) -> int:
         if not self.client.collection_exists(self.collection):
             return 0
