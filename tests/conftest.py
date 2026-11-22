@@ -57,8 +57,11 @@ class FakeLLM:
     def __init__(self) -> None:
         self.prompts: list[str] = []
         self.reply: str | None = None
+        self.replies: list[str] = []  # consumed one per call, before `reply`
 
     def _answer(self, prompt: str) -> str:
+        if self.replies:
+            return self.replies.pop(0)
         if self.reply is not None:
             return self.reply
         match = re.search(r'<source id="1"[^>]*>\n(.*?)\n</source>', prompt, re.S)
