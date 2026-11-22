@@ -3,11 +3,11 @@
 | Metric | Score | Threshold | |
 |---|---|---|---|
 | retrieval_hit | 1.00 | 0.80 | ✅ |
-| citation_hit | 1.00 | 0.70 | ✅ |
+| citation_hit | 0.92 | 0.70 | ✅ |
 | answer_correct | 1.00 | 0.70 | ✅ |
 | refusal_correct | 1.00 | 0.80 | ✅ |
 
-16 questions · avg LLM latency 877 ms · 25069 tokens
+16 questions · avg LLM latency 746 ms · 25005 tokens
 
 | Question | Retrieved | Cited | Correct | Refusal | Best score |
 |---|---|---|---|---|---|
@@ -17,7 +17,7 @@
 | `transformer-heads` | ✅ | ✅ | ✅ | ✅ | 0.807 |
 | `bahdanau-model-name` | ✅ | ✅ | ✅ | ✅ | 0.779 |
 | `bahdanau-encoder` | ✅ | ✅ | ✅ | ✅ | 0.759 |
-| `gan-two-models` | ✅ | ✅ | ✅ | ✅ | 0.836 |
+| `gan-two-models` | ✅ | ❌ | ✅ | ✅ | 0.836 |
 | `gan-game` | ✅ | ✅ | ✅ | ✅ | 0.697 |
 | `gat-citation-datasets` | ✅ | ✅ | ✅ | ✅ | 0.797 |
 | `gat-inductive` | ✅ | ✅ | ✅ | ✅ | 0.795 |

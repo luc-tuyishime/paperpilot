@@ -1,0 +1,80 @@
+# RAG evaluation: runs the whole system (Postgres, Qdrant, Ollama embeddings, Gemini answers)
+# on the 5 papers, asks every question in evals/questions.yaml, and fails if a score drops
+# below its threshold. The report appears in the run's Summary tab.
+#
+# Needs one repository secret: GEMINI_API_KEY (Settings -> Secrets and variables -> Actions).
+# Runs on pull requests that touch the app or the eval set, and on demand (Actions -> Run workflow).
+name: RAG evaluation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PAPERPILOT_DATABASE_URL: postgresql+psycopg://paperpilot:paperpilot@localhost:5432/paperpilot
+      PAPERPILOT_QDRANT_URL: http://localhost:6333
+      PAPERPILOT_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: paperpilot
+          POSTGRES_PASSWORD: paperpilot
+          POSTGRES_DB: paperpilot
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U paperpilot" --health-interval 5s --health-retries 10
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports: ["6333:6333"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the Gemini secret exists
+        run: |
+          if [ -z "$PAPERPILOT_GEMINI_API_KEY" ]; then
+            echo "::error::Add a GEMINI_API_KEY repository secret to run the evaluation."
+            exit 1
+          fi
+
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync
+
+      - name: Install Ollama and the embedding model
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          # The installer may already start Ollama as a service; start it only if it isn't up.
+          curl -s localhost:11434 || (ollama serve > /tmp/ollama.log 2>&1 &)
+          for i in $(seq 1 30); do curl -s localhost:11434 && break; sleep 1; done
+          ollama pull nomic-embed-text
+
+      - name: Create tables
+        run: uv run alembic upgrade head
+
+      - name: Start the API
+        run: |
+          uv run uvicorn app.main:app --port 8000 > /tmp/api.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf localhost:8000/health && break; sleep 1; done
+
+      - name: Run the evaluation
+        run: uv run python -m evals.run_eval --ingest --delay 7
+
+      - name: Publish the report
+        if: always()
+        run: |
+          cat evals/results/report.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo "### API log (last 50 lines)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -50 /tmp/api.log >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-results
+          path: evals/results/

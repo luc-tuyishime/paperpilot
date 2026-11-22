@@ -22,11 +22,13 @@ from app.api.deps import EmbedderDep, LLMDep, SettingsDep, StoreDep
 from app.llm.base import LLMError, Usage
 from app.schemas.ask import AskRequest, AskResponse, Source, UsageOut
 from app.services.rag import (
+    CITE_REMINDER,
     IDK,
     SYSTEM_PROMPT,
     Retrieval,
     build_prompt,
     cited_numbers,
+    is_grounded,
     is_refusal,
     retrieve,
 )
@@ -101,13 +103,23 @@ def ask(
             usage=None,
         )
 
+    prompt = build_prompt(body.question, retrieval.sources)
     try:
-        result = llm.generate(SYSTEM_PROMPT, build_prompt(body.question, retrieval.sources))
+        result = llm.generate(SYSTEM_PROMPT, prompt)
+        # Citation check: an answer (not a refusal) with no valid [n] gets ONE retry with a
+        # reminder. Tokens and latency of both calls are counted.
+        if not is_refusal(result.text) and not cited_numbers(result.text, len(sources)):
+            logger.warning("answer had no citations, retrying once")
+            first = result.usage
+            result = llm.generate(SYSTEM_PROMPT, prompt + CITE_REMINDER)
+            result.usage.input_tokens += first.input_tokens
+            result.usage.output_tokens += first.output_tokens
+            result.usage.latency_ms += first.latency_ms
     except LLMError as exc:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(exc)) from exc
 
     cited = cited_numbers(result.text, len(sources))
-    grounded = not is_refusal(result.text)
+    grounded = is_grounded(result.text, len(sources))  # still uncited -> not grounded
     _log(body.question, retrieval, grounded, result.usage)
     return AskResponse(
         answer=result.text.strip(),
@@ -156,7 +168,8 @@ def ask_stream(
             return
 
         text = "".join(answer)
-        grounded = not is_refusal(text)
+        # Already streamed, so no retry here: an uncited answer is reported as not grounded.
+        grounded = is_grounded(text, len(sources))
         _log(body.question, retrieval, grounded, usage)
         yield _sse(
             "done",

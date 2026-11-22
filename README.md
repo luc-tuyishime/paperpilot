@@ -47,7 +47,7 @@ Open http://localhost:8000/docs for the interactive API docs (generated from the
 - [x] **Lesson 1.** Project skeleton, `/health`, tests, CI, Docker
 - [x] **Day 1. Ingestion:** PostgreSQL + Alembic, PDF/arXiv upload, chunking, Ollama embeddings, Qdrant, background tasks, `/search`
 - [x] **Day 2. RAG:** `/ask` and `/ask/stream` (SSE) with page citations and an "I don't know" rule; Gemini/Ollama behind one LLM interface; evaluation set with 4 metrics, run in CI
-- [ ] **Day 3. LangGraph agent with tools and memory** + architecture docs
+- [x] **Day 3. Agent:** LangGraph loop with 2 tools (list/search papers), memory per conversation in PostgreSQL, step limit, tool-call trace
 - [ ] Later: Next.js chat, Grafana dashboard, Kubernetes manifests
 
 ## Layout
@@ -60,6 +60,7 @@ app/
   api/routes/          # HTTP layer: documents, search, health
   services/            # pdf, chunking, embeddings, vector_store, ingestion, arxiv, rag
   llm/                 # one LLM interface: Gemini, Ollama (retries, streaming, token usage)
+  agent/               # LangGraph agent: tools, graph, memory
   repositories/        # database queries
   db/                  # engine, session, ORM models
   schemas/             # API request/response models

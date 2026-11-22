@@ -42,7 +42,7 @@ uv run alembic upgrade head
 
 ```
 PAPERPILOT_GEMINI_API_KEY=your-key-here
-``` 
+```
 
 Check which Flash models your key can use (names change over time):
 
@@ -51,7 +51,7 @@ curl -s https://generativelanguage.googleapis.com/v1beta/models \
   -H "x-goog-api-key: YOUR_KEY" | grep '"name"' | grep -i flash
 ```
 
-If `gemini-2.5-flash` isn't listed, set `PAPERPILOT_GEMINI_MODEL=` to one that is. Your
+If `gemini-3.8-flash` isn't listed, set `PAPERPILOT_GEMINI_MODEL=` to one that is. Your
 free-tier limits (requests per minute and per day) are shown in AI Studio.
 
 **4. Start the API** and import the 5 papers from arXiv:

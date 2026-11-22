@@ -97,3 +97,48 @@ def test_stream_sends_sources_tokens_then_done(
     answer = "".join(data["text"] for name, data in events if name == "token")
     assert "generator" in answer.lower()
     assert events[-1][1]["grounded"] is True and events[-1][1]["cited"] == [1]
+
+
+UNCITED = "The generator G and the discriminator D are trained together."
+
+
+def test_uncited_answer_is_retried_once_with_a_reminder(
+    client: TestClient, make_pdf: Callable[..., bytes], llm: FakeLLM
+) -> None:
+    ingest(client, make_pdf)
+    llm.replies = [UNCITED, UNCITED.rstrip(".") + " [1]."]
+
+    body = client.post("/ask", json={"question": "how is the generator trained"}).json()
+
+    assert len(llm.prompts) == 2
+    assert "had no citations" in llm.prompts[1]
+    assert body["grounded"] is True and body["citations"][0]["number"] == 1
+    assert body["usage"]["output_tokens"] == 20  # both calls counted
+
+
+def test_answer_still_uncited_after_retry_is_not_grounded(
+    client: TestClient, make_pdf: Callable[..., bytes], llm: FakeLLM
+) -> None:
+    ingest(client, make_pdf)
+    llm.reply = UNCITED
+
+    body = client.post("/ask", json={"question": "how is the generator trained"}).json()
+
+    assert len(llm.prompts) == 2  # one retry, never more
+    assert body["grounded"] is False
+    assert body["citations"] == []
+
+
+def test_stream_reports_uncited_answer_as_not_grounded(
+    client: TestClient, make_pdf: Callable[..., bytes], llm: FakeLLM
+) -> None:
+    ingest(client, make_pdf)
+    llm.reply = UNCITED
+
+    with client.stream(
+        "POST", "/ask/stream", json={"question": "how is the generator trained"}
+    ) as r:
+        raw = r.read().decode()
+
+    done = json.loads(raw.strip().split("\n\n")[-1].split("\n")[1][6:])
+    assert done["grounded"] is False and done["cited"] == []

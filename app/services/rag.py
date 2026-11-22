@@ -29,6 +29,12 @@ Rules:
 """
 
 
+CITE_REMINDER = (
+    "\n\nYour previous answer had no citations. Answer again using only the sources above, "
+    "and end every factual sentence with its source number, like [1]."
+)
+
+
 @dataclass(frozen=True)
 class Retrieval:
     sources: list[ScoredChunk]  # chunks that passed the threshold, numbered 1..n in the prompt
@@ -65,3 +71,10 @@ def cited_numbers(answer: str, n_sources: int) -> list[int]:
 
 def is_refusal(answer: str) -> bool:
     return answer.strip().lower().startswith("i don't know")
+
+
+def is_grounded(answer: str, n_sources: int) -> bool:
+    """Grounded = not a refusal AND cites at least one real source.
+    A correct-looking answer with no citation is not trusted: the model may have answered
+    from its own memory instead of the sources (the eval caught this on a GAN question)."""
+    return not is_refusal(answer) and bool(cited_numbers(answer, n_sources))

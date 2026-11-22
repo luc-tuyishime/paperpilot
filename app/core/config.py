@@ -14,11 +14,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="PAPERPILOT_")
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="PAPERPILOT_", extra="ignore")
 
     app_name: str = "PaperPilot"
     environment: str = "local"  # local | docker | ci | production
-    version: str = "0.3.0"
+    version: str = "0.4.0"
 
     # PostgreSQL: the source of truth for documents and their status
     database_url: str = "postgresql+psycopg://paperpilot:paperpilot@localhost:5432/paperpilot"
@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     # LLM that writes the answers: "gemini" (free tier, fast) or "ollama" (local, offline)
     llm_provider: Literal["gemini", "ollama"] = "gemini"
     gemini_api_key: SecretStr | None = None  # SecretStr: never printed in logs or errors
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.8-flash"  # model names change: check your key's list
     ollama_chat_model: str = "llama3.2:3b"
     llm_temperature: float = 0.1  # low = factual, repeatable answers
 
@@ -51,6 +51,9 @@ class Settings(BaseSettings):
     # Chunks below this cosine score are ignored. If none pass -> "I don't know" with no LLM call.
     # Tune it with the evaluation set (Day 2), don't guess.
     min_relevance: float = 0.55
+
+    # Agent (Day 3): max model calls per message. A guardrail against loops and runaway cost.
+    agent_max_steps: int = 6
 
 
 @lru_cache

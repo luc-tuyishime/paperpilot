@@ -15,5 +15,5 @@ jobs:
       - run: uv sync                         # install app + dev dependencies
       - run: uv run ruff check .             # lint: style and common bugs
       - run: uv run ruff format --check .    # formatting
-      - run: uv run mypy app                 # type checks
+      - run: uv run mypy app evals           # type checks
       - run: uv run pytest -v                # tests
